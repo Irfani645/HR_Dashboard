@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Manager</title>
+    <link rel="stylesheet" href="pos1.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.21/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        /* Additional CSS for the image and text layout */
+        .header-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #f0f0f0;
+        }
+        .header-container img {
+            max-width: 150px;
+            margin-right: 20px;
+        }
+        .header-container p {
+            max-width: 600px;
+        }
+        /* Adjustments for smaller screens */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            .header-container img {
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header-container">
+        <img src="pimslogo.png" alt="HR Manager">
+        <p id="pims-name">PESHAWAR INSTITUTE OF MEDICAL SCIENCES</p>
+    </div>
+    <h1>HR Manager Dashboard</h1>
+    <nav>
+        <ul>
+            <li><a href="#" onclick="showSection('employees-section')">Employees</a></li>
+            <li><a href="#" onclick="showSection('leave-requests')">Leave Requests</a></li>
+            <li><a href="#" onclick="showSection('payroll-section')">Payroll</a></li>
+            <li><a href="#" onclick="showSection('performance-section')">Performance Reviews</a></li>
+            <li><a href="#" onclick="showSection('final-result-section')">Final Result</a></li>
+        </ul>
+    </nav>
+    <main id="main-content">
+        <div id="employees-section">
+            <h2>Employees List</h2>
+            <table id="employee-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Father Name</th>
+                        <th>Contact No</th>
+                        <th>Department</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Employee rows will be populated here -->
+                </tbody>
+            </table>
+            
+            <h2>Add New Employee</h2>
+            <form id="employee-form">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required><br>
+                <label for="fatherName">Father Name:</label>
+                <input type="text" id="fatherName" name="fatherName" required><br>
+                <label for="contactNo">Contact No:</label>
+                <input type="text" id="contactNo" name="contactNo" required><br>
+                <label for="department">Department:</label>
+                <input type="text" id="department" name="department" required><br>
+                <button type="button" onclick="saveEmployee()">Save</button>
+            </form>
+        </div>
+
+        <div id="leave-requests" style="display:none;">
+            <h2>Leave Requests</h2>
+            <form id="leave-request-form">
+                <label for="leave-employee-name">Select Employee:</label>
+                <select id="leave-employee-name" name="leave-employee-name" required>
+                    <!-- Employee options will be populated here -->
+                </select><br>
+                <label for="leave-days">Number of Leave Days:</label>
+                <input type="number" id="leave-days" name="leave-days" required><br>
+                <label for="application-date">Date of Application:</label>
+                <input type="date" id="application-date" name="application-date" required><br>
+                <label for="cover-employee">Cover Employee Name:</label>
+                <input type="text" id="cover-employee" name="cover-employee" required><br>
+                <label for="cover-employee-designation">Designation of Cover Employee:</label>
+                <input type="text" id="cover-employee-designation" name="cover-employee-designation" required><br>
+                <label for="signature">Signature:</label>
+                <input type="text" id="signature" name="signature" required><br>
+                <button type="button" onclick="saveLeaveRequest()">Save</button>
+            </form>
+            <h2>Saved Leave Requests</h2>
+            <ul id="leave-request-list">
+                <!-- Leave requests will be displayed here -->
+            </ul>
+        </div>
+
+        <div id="performance-section" style="display:none;">
+            <h2>Performance Review</h2>
+            <form id="performance-form">
+                <label for="performance-employee-name">Select Employee:</label>
+                <select id="performance-employee-name" name="performance-employee-name" required>
+                    <!-- Employee options will be populated here -->
+                </select><br>
+                <label for="performance">Performance (%):</label>
+                <select id="performance" name="performance">
+                    <!-- Options will be populated by JavaScript -->
+                </select><br>
+                <button type="button" onclick="savePerformance()">Save</button>
+            </form>
+            <h2>Saved Performance Reviews</h2>
+            <ul id="performance-list">
+                <!-- Performance reviews will be displayed here -->
+            </ul>
+        </div>
+        
+        <div id="payroll-section" style="display:none;">
+            <h2>Payroll</h2>
+            <form id="payroll-form">
+                <label for="payroll-employee-name">Select Employee:</label>
+                <select id="payroll-employee-name" name="payroll-employee-name" required>
+                    <!-- Employee options will be populated here -->
+                </select><br>
+                <label for="salary">Salary:</label>
+                <input type="number" id="salary" name="salary" required><br>
+                <label for="bank-account">Bank Account Number:</label>
+                <input type="text" id="bank-account" name="bank-account" required><br>
+                <label for="tax-deductions">Tax Deductions:</label>
+                <input type="number" id="tax-deductions" name="tax-deductions" required><br>
+                <label for="allowances">Allowances:</label>
+                <input type="number" id="allowances" name="allowances" required><br>
+                <button type="button" onclick="savePayroll()">Save</button>
+            </form>
+            <h2>Saved Payroll</h2>
+            <ul id="payroll-list">
+                <!-- Payroll data will be displayed here -->
+            </ul>
+        </div>
+        
+        <div id="final-result-section" style="display:none;">
+            <h2>Final Result</h2>
+            <button onclick="downloadPDF()">Download PDF</button>
+            <table id="final-result-table">
+                <thead>
+                    <tr class="table_head">
+                        <th>Name</th>
+                        <th>Father Name</th>
+                        <th>Contact No</th>
+                        <th>Department</th>
+                        <th>Leave Days</th>
+                        <th>Performance</th>
+                        <th>Salary</th>
+                        <th>Bank Account</th>
+                        <th>Tax Deductions</th>
+                        <th>Allowances</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Final result rows will be populated here -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+    <script>
+        const employees = [];
+
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('main > div');
+            sections.forEach(section => {
+                section.style.display = section.id === sectionId ? 'block' : 'none';
+                if (sectionId !== 'employees-section' && sectionId !== 'final-result-section') {
+                    populateEmployeeOptions(sectionId);
+                }
+                if (sectionId === 'final-result-section') {
+                    populateFinalResults();
+                }
+            });
+        }
+
+        function saveEmployee() {
+            const name = document.getElementById('name').value;
+            const fatherName = document.getElementById('fatherName').value;
+            const contactNo = document.getElementById('contactNo').value;
+            const department = document.getElementById('department').value;
+
+            const employee = { name, fatherName, contactNo, department, leaveDays: 0, performance: 0, salary: 0, bankAccount: '', taxDeductions: 0, allowances: 0 };
+            employees.push(employee);
+
+            const table = document.getElementById('employee-table').getElementsByTagName('tbody')[0];
+            const newRow = table.insertRow();
+            newRow.insertCell(0).innerText = name;
+            newRow.insertCell(1).innerText = fatherName;
+            newRow.insertCell(2).innerText = contactNo;
+            newRow.insertCell(3).innerText = department;
+            newRow.insertCell(4).innerHTML = '<button onclick="removeEmployee(this)">Remove</button>';
+
+            document.getElementById('employee-form').reset();
+            populateEmployeeOptions('leave-requests');
+            populateEmployeeOptions('performance-section');
+            populateEmployeeOptions('payroll-section');
+        }
+
+        function removeEmployee(button) {
+            const row = button.parentNode.parentNode;
+            const index = row.rowIndex - 1;
+            employees.splice(index, 1);
+            row.parentNode.removeChild(row);
+            populateEmployeeOptions('leave-requests');
+            populateEmployeeOptions('performance-section');
+            populateEmployeeOptions('payroll-section');
+        }
+
+        function populateEmployeeOptions(sectionId) {
+            const selectElements = {
+                'leave-requests': document.getElementById('leave-employee-name'),
+                'performance-section': document.getElementById('performance-employee-name'),
+                'payroll-section': document.getElementById('payroll-employee-name')
+            };
+
+            if (selectElements[sectionId]) {
+                const select = selectElements[sectionId];
+                select.innerHTML = '';
+                employees.forEach((employee, index) => {
+                    const option = document.createElement('option');
+                    option.value = index;
+                    option.text = employee.name;
+                    select.add(option);
+                });
+            }
+        }
+
+        function saveLeaveRequest() {
+            const employeeIndex = document.getElementById('leave-employee-name').value;
+            const leaveDays = document.getElementById('leave-days').value;
+            employees[employeeIndex].leaveDays = leaveDays;
+
+            const leaveRequestList = document.getElementById('leave-request-list');
+            const li = document.createElement('li');
+            li.textContent = `${employees[employeeIndex].name} - ${leaveDays} days`;
+            leaveRequestList.appendChild(li);
+
+            document.getElementById('leave-request-form').reset();
+        }
+
+        function savePerformance() {
+            const employeeIndex = document.getElementById('performance-employee-name').value;
+            const performance = document.getElementById('performance').value;
+            employees[employeeIndex].performance = performance;
+
+            const performanceList = document.getElementById('performance-list');
+            const li = document.createElement('li');
+            li.textContent = `${employees[employeeIndex].name} - ${performance}%`;
+            performanceList.appendChild(li);
+
+            document.getElementById('performance-form').reset();
+        }
+
+        function savePayroll() {
+            const employeeIndex = document.getElementById('payroll-employee-name').value;
+            const salary = document.getElementById('salary').value;
+            const bankAccount = document.getElementById('bank-account').value;
+            const taxDeductions = document.getElementById('tax-deductions').value;
+            const allowances = document.getElementById('allowances').value;
+
+            employees[employeeIndex].salary = salary;
+            employees[employeeIndex].bankAccount = bankAccount;
+            employees[employeeIndex].taxDeductions = taxDeductions;
+            employees[employeeIndex].allowances = allowances;
+
+            const payrollList = document.getElementById('payroll-list');
+            const li = document.createElement('li');
+            li.textContent = `${employees[employeeIndex].name} - ${salary}`;
+            payrollList.appendChild(li);
+
+            document.getElementById('payroll-form').reset();
+        }
+
+        function populateFinalResults() {
+            const table = document.getElementById('final-result-table').getElementsByTagName('tbody')[0];
+            table.innerHTML = '';
+            employees.forEach(employee => {
+                const newRow = table.insertRow();
+                newRow.insertCell(0).innerText = employee.name;
+                newRow.insertCell(1).innerText = employee.fatherName;
+                newRow.insertCell(2).innerText = employee.contactNo;
+                newRow.insertCell(3).innerText = employee.department;
+                newRow.insertCell(4).innerText = employee.leaveDays;
+                newRow.insertCell(5).innerText = employee.performance;
+                newRow.insertCell(6).innerText = employee.salary;
+                newRow.insertCell(7).innerText = employee.bankAccount;
+                newRow.insertCell(8).innerText = employee.taxDeductions;
+                newRow.insertCell(9).innerText = employee.allowances;
+            });
+        }
+
+        function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const imgData = 'pimslogo.png';  // Base64 encoded image data for pimslogo.png
+
+            doc.addImage(imgData, 'JPEG', 10, 10, 30, 20);
+            doc.setFontSize(15);
+            doc.text('PESHAWAR INSTITUTE OF MEDICAL SCIENCES', 50, 20);
+            doc.setFontSize(12);
+            doc.text('Final Results by HR Manager Said Baadshah', 10, 40);
+
+            doc.autoTable({
+                head: [['Name', 'Father Name', 'Contact No', 'Department', 'Leave Days', 'Performance', 'Salary', 'Bank Account', 'Tax Deductions', 'Allowances']],
+                body: employees.map(emp => [emp.name, emp.fatherName, emp.contactNo, emp.department, emp.leaveDays, emp.performance, emp.salary, emp.bankAccount, emp.taxDeductions, emp.allowances]),
+                startY: 50,
+                theme: 'striped',
+                
+            });
+
+            doc.save('FinalResults.pdf');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const performanceSelect = document.getElementById('performance');
+            for (let i = 0; i <= 100; i += 5) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.text = `${i}%`;
+                performanceSelect.add(option);
+            }
+        });
+    </script>
+</body>
+</html>
